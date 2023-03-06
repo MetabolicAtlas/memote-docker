@@ -1,4 +1,8 @@
-FROM python:3.6-slim
+FROM python:3.9-slim
+
+LABEL org.opencontainers.image.source=https://github.com/metabolicatlas/memote-docker
+LABEL version="0.13"
+LABEL description="Docker image of opencobra/memote adapted for MetabolicAtlas/standard-GEM-validation"
 
 ENV PYTHONUNBUFFERED=1
 
