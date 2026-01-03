@@ -2,3 +2,5 @@ memote==0.17.0
 yamllint
 scipy
 gurobipy>=13.0
+# greenlet required due to a hash issue
+greenlet
