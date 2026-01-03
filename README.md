@@ -17,7 +17,16 @@ For now, the best way to have memote interact with files is to mount a local dir
 docker run -v ~/local/path/to/models/directory:/opt ghcr.io/metabolicatlas/memote-docker:0.17 memote run /opt/my-model.xml
 ```
 
-## Using Gurobi (optional)
+## New functionality
+
+The following functionality has been added when comparing to the original repository:
+- Memote v0.17 (versus v0.12)
+- Python v3.11 (versus v3.6)
+- addition of `scipy` and `yamllint`
+- Zenodo DOIs
+- Gurobi support
+
+### Using Gurobi (optional)
 
 The image bundles `gurobipy`; if a Gurobi license is provided the container switches to Gurobi, otherwise it falls back to GLPK.
 
@@ -36,11 +45,3 @@ GitHub Actions example using base64:
       ghcr.io/metabolicatlas/memote-docker:0.17 \
       memote run /opt/my-model.xml
 ```
-## New functionality
-
-The following functionality has been added when comparing to the original repository:
-- Memote v0.13 (versus v0.12)
-- Python v3.9 (versus v3.6)
-- addition of `scipy` and `yamllint`
-- Zenodo DOIs
-- Gurobi support
