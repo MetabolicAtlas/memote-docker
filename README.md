@@ -20,17 +20,18 @@ docker run -v ~/local/path/to/models/directory:/opt ghcr.io/metabolicatlas/memot
 
 The image bundles `gurobipy`; if a Gurobi license is provided the container switches to Gurobi, otherwise it falls back to GLPK.
 
-- Set a single env var `GUROBI_LICENSE` with the license content. The entrypoint writes it to `~/.gurobi/gurobi.lic` and sets `COBRA_SOLVER=gurobi`.
-- If `GUROBI_LICENSE` is unset, `COBRA_SOLVER` defaults to `glpk` and the existing behaviour is unchanged.
+- Preferred: set `GUROBI_LICENSE_B64` to a base64-encoded `gurobi.lic` string (preserves newlines). The entrypoint decodes it to `~/.gurobi/gurobi.lic` and sets `COBRA_SOLVER=gurobi`.
+- Fallback: set `GUROBI_LICENSE` to the raw license text (written as-is to `~/.gurobi/gurobi.lic`).
+- If neither is set, `COBRA_SOLVER` defaults to `glpk` and the existing behaviour is unchanged.
 
-GitHub Actions example (license stored as a secret, raw or base64):
+GitHub Actions example using base64:
 
 ```yaml
 - name: Run memote with Gurobi
   env:
-    GUROBI_LICENSE: ${{ secrets.GUROBI_LICENSE }}
+    GUROBI_LICENSE_B64: ${{ secrets.GUROBI_LICENSE_B64 }}
   run: |
-    docker run -e GUROBI_LICENSE="$GUROBI_LICENSE" \
+    docker run -e GUROBI_LICENSE_B64="$GUROBI_LICENSE_B64" \
       ghcr.io/metabolicatlas/memote-docker:0.13 \
       memote run /opt/my-model.xml
 ```
