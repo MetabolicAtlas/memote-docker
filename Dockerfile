@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.11.14-slim
 
 LABEL org.opencontainers.image.source=https://github.com/metabolicatlas/memote-docker
 LABEL version="0.13"
@@ -14,9 +14,11 @@ ENV HOME="/home/${USER_}"
 
 RUN groupadd --system --gid "${GID}" "${USER_}" \
     && useradd --system --create-home --home-dir "${HOME}" \
-        --uid "${UID}" --gid "${USER_}" "${USER_}"
-
-RUN chown -R "${USER_}:${USER_}" "${HOME}"
+        --uid "${UID}" --gid "${USER_}" "${USER_}" \
+    && chown -R "${USER_}:${USER_}" "${HOME}"
+    
+WORKDIR /opt
+COPY requirements.* /opt/
 
 RUN set -eux \
     && apt-get update \
@@ -26,16 +28,9 @@ RUN set -eux \
         openssl \
         openssh-client \
         procps \
-    && pip install --upgrade pip setuptools wheel \
-    && rm -rf /root/.cache/pip \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-WORKDIR /opt
-
-COPY requirements.* /opt/
-
-RUN set -eux \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && pip install --upgrade pip \
     && pip install -r requirements.txt \
     && rm -rf /root/.cache/pip
 
@@ -46,6 +41,10 @@ RUN set -eux \
     && chmod o+rx /usr/bin/* /usr/local/bin/* \
     && chmod -R a+rwx "${HOME}"
 
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 USER "${USER_}"
 
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["memote", "-h"]
