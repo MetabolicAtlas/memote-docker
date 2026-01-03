@@ -46,6 +46,10 @@ RUN set -eux \
     && chmod o+rx /usr/bin/* /usr/local/bin/* \
     && chmod -R a+rwx "${HOME}"
 
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 USER "${USER_}"
 
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["memote", "-h"]

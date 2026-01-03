@@ -15,3 +15,22 @@ For now, the best way to have memote interact with files is to mount a local dir
 ```bash
 docker run -v ~/local/path/to/models/directory:/opt ghcr.io/metabolicatlas/memote-docker:0.13 memote run /opt/my-model.xml
 ```
+
+## Using Gurobi (optional)
+
+The image bundles `gurobipy`; if a Gurobi license is provided the container switches to Gurobi, otherwise it falls back to GLPK.
+
+- Set a single env var `GUROBI_LICENSE` with the license content. The entrypoint writes it to `~/.gurobi/gurobi.lic` and sets `COBRA_SOLVER=gurobi`.
+- If `GUROBI_LICENSE` is unset, `COBRA_SOLVER` defaults to `glpk` and the existing behaviour is unchanged.
+
+GitHub Actions example (license stored as a secret, raw or base64):
+
+```yaml
+- name: Run memote with Gurobi
+  env:
+    GUROBI_LICENSE: ${{ secrets.GUROBI_LICENSE }}
+  run: |
+    docker run -e GUROBI_LICENSE="$GUROBI_LICENSE" \
+      ghcr.io/metabolicatlas/memote-docker:0.13 \
+      memote run /opt/my-model.xml
+```
