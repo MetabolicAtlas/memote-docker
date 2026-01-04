@@ -25,6 +25,7 @@ The following functionality has been added when comparing to the original reposi
 - addition of `scipy` and `yamllint`
 - Zenodo DOIs
 - Gurobi support
+- arm64 support (Apple Silicon) in addition to amd64
 
 ### Using Gurobi (optional)
 
