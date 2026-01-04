@@ -5,6 +5,7 @@ LICENSE_DIR="${HOME}/.gurobi"
 LICENSE_FILE="${LICENSE_DIR}/gurobi.lic"
 
 # Accept a base64-encoded license (preferred) or raw text as fallback.
+USER_LICENSE=""
 if [ -n "${GUROBI_LICENSE_B64:-}" ]; then
     mkdir -p "${LICENSE_DIR}"
     python - "$GUROBI_LICENSE_B64" "$LICENSE_FILE" <<'PY'
@@ -18,14 +19,16 @@ with open(dest, "wb") as fh:
     fh.write(base64.b64decode(data))
 PY
     export GRB_LICENSE_FILE="${LICENSE_FILE}"
+    USER_LICENSE=1
 elif [ -n "${GUROBI_LICENSE:-}" ]; then
     mkdir -p "${LICENSE_DIR}"
     printf "%s" "${GUROBI_LICENSE}" > "${LICENSE_FILE}"
     export GRB_LICENSE_FILE="${LICENSE_FILE}"
+    USER_LICENSE=1
 fi
 
 # Pick solver based on whether a license is available; default to GLPK.
-if [ -n "${GRB_LICENSE_FILE:-}" ] && [ -r "${GRB_LICENSE_FILE}" ]; then
+if [ -n "${USER_LICENSE}" ] && [ -n "${GRB_LICENSE_FILE:-}" ] && [ -r "${GRB_LICENSE_FILE}" ]; then
     export COBRA_SOLVER="${COBRA_SOLVER:-gurobi}"
 else
     export COBRA_SOLVER="${COBRA_SOLVER:-glpk}"
